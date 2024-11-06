@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include <io.h>
@@ -58,10 +59,17 @@ Node* insertCharToList(Node* previous, char symbol) {
 }
 // Удалить следующий элемент
 // Возвращает новый следующий элемент
-Node* removeFromList(Node* previous) {
+Node* removeNextFromList(Node* previous) {
     Node* next = previous->next->next;
     free(previous->next);
     previous->next = next;
+    return next;
+}
+// Удалить данный элемент
+// Возвращает следующий элемент
+Node* removeFromList(Node* node) {
+    Node* next = node->next;
+    free(node);
     return next;
 }
 
@@ -84,6 +92,7 @@ TwoWayNode* newEmptyTwoWayNode() {
 
 // Вставить элемент после указанного (двусвязный список)
 void insertToTwoWayList(TwoWayNode* previous, TwoWayNode* node) {
+    if (previous == NULL || node == NULL) return;
     TwoWayNode* next = previous->next;
 
     previous->next = node;
@@ -95,35 +104,54 @@ void insertToTwoWayList(TwoWayNode* previous, TwoWayNode* node) {
 // Вставить символ после указанного (двусвязный список)
 // Возвращает новый элемент
 TwoWayNode* insertCharToTwoWayList(TwoWayNode* previous, char symbol) {
-    TwoWayNode* node = newTwoWayNode(symbol, previous, previous->next);
-    previous->next = node;
-    node->next->prev = node;
+    TwoWayNode* node = newTwoWayNode(symbol, previous, previous == NULL ? NULL : previous->next);
+    if (previous != NULL) {
+        node = newTwoWayNode(symbol, previous, previous->next);
+        previous->next = node;
+        node->next->prev = node;
+    }
+    else {
+        node = newEmptyTwoWayNode();
+        node->symbol = symbol;
+    }
     return node;
 }
 // Удалить следующий элемент (двусвязный список)
 // Возвращает новый следующий элемент
 TwoWayNode* removeNextFromTwoWayList(TwoWayNode* previous) {
+    if (previous == NULL || previous->next == NULL) return NULL;
     TwoWayNode* next = previous->next->next;
     free(previous->next);
     previous->next = next;
-    next->prev = previous;
+    if (next != NULL) next->prev = previous;
     return next;
 }
 // Удалить предыдущий элемент (двусвязный список)
 // Возвращает новый предыдущий элемент
 TwoWayNode* removePreviousFromTwoWayList(TwoWayNode* next) {
-    TwoWayNode* previous = next->prev->prev;\
+    if (next == NULL || next->prev == NULL) return NULL;
+    TwoWayNode* previous = next->prev->prev;
     free(next->prev);
-    previous->next = next;
+    if (previous != NULL) previous->next = next;
     next->prev = previous;
     return previous;
 }
 // Удалить данный элемент (двусвязный список)
 void removeFromTwoWayList(TwoWayNode* node) {
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
+    if (node == NULL) return;
+    if (node->prev != NULL) node->prev->next = node->next;
+    if (node->next != NULL) node->next->prev = node->prev;
     free(node);
 }
+// Удалить данный элемент
+// Возвращает следующий элемент
+TwoWayNode* removeFirstFromTwoWayList(TwoWayNode* node) {
+    for (; node->prev != NULL; node = node->prev);
+    Node* next = node->next;
+    removeFromTwoWayList(node);
+    return next;
+}
+
 
 // Прочитать файл в односвязный список, используя буфер
 Node* readToList(FILE* file, const size_t buffer_size, const char stop) {
@@ -207,7 +235,7 @@ Node* removeDigitsFromList(Node* start) {
     if (start == NULL) return NULL;
     for (node = start; node->next != NULL; node = node->next) {
         if (isdigit(node->next->symbol)) {
-            node = removeFromList(node);
+            node = removeNextFromList(node);
         }    
     }
     return start;
