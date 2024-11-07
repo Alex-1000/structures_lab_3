@@ -45,6 +45,10 @@ jobs:
             c_compiler: cl
 
     steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12.3'
+        architecture: 'x64'
     - uses: actions/checkout@v4
 
     - name: Set reusable strings
