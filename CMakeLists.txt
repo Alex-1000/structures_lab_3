@@ -24,6 +24,6 @@ set(TEST_CASES
 
 foreach(case ${TEST_CASES})
   add_test(NAME "Test ${case}"
-           COMMAND test_runner.py
+           COMMAND python3 test_runner.py
                    "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} ${case}")
 endforeach(case TEST_CASES)
