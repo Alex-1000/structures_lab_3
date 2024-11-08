@@ -340,6 +340,7 @@ char* twoWayListToChar(TwoWayNode* node) {
         }
         node = node->next;
     }
+    str[str_size++] = '\0';
     return str;
 }
 // Преобразование строки в двусвязный список
