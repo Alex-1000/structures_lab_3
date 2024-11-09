@@ -327,8 +327,6 @@ Node* charToList(char* str) {
 // Преобразование двусвязного списка в строку
 // На вход передаётся начало списка
 char* twoWayListToChar(TwoWayNode* node) {
-    if (node == NULL)
-        return "";
     size_t alloc_size = DEFAULT_ALLOC_SIZE;
     size_t str_size = 0;
     char* str = (char*)malloc(sizeof(char) * alloc_size);
@@ -341,7 +339,7 @@ char* twoWayListToChar(TwoWayNode* node) {
         node = node->next;
     }
     str[str_size++] = '\0';
-    return str;
+    return realloc(str, str_size);
 }
 // Преобразование строки в двусвязный список
 TwoWayNode* charToTwoWayList(char* str) {
