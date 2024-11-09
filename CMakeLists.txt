@@ -15,12 +15,16 @@ enable_testing()
 set(RUNNER test_runner.py)
 set(TEST_CASES
     "hello123 world";
+    "+";
+    "-";
+    "0";
+    "9";
     "a+b+c";
     "-a-b-c";
     "123abc";
     "abc123";
     "+-abc";
-    "++--abc")
+    "++--abc";)
 
 foreach(case ${TEST_CASES})
   add_test(NAME "Test ${case}"
